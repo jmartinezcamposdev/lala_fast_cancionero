@@ -1,4 +1,28 @@
 <?php
+
+function manageRequest(): ?string
+{
+    switch ($_POST['request']) {
+        case 'general_search':
+            return json_encode([
+                    'status' => 'success',
+                    'table_data' => [['siete', 'ocho', 'nueve'], ['diez', 'once', 'doce']],
+            ]);
+        default:
+            break;
+    }
+    return null;
+}
+
+if (isset($_POST) && !empty($_POST)) {
+    if (key_exists('request', $_POST)) {
+        $result = manageRequest();
+        if ($result != null) {
+            print($result);
+        }
+    }
+    die();
+}
 ?>
 <!doctype html>
 <html lang="es">
@@ -21,43 +45,15 @@
 <div id="search-container">
     <label for="song-search">Búsqueda</label>
     <input id="song-search" type="text" class="form-control" placeholder="Busca tu artista o canción preferidos">
-    <button class="btn btn-primary"><i class="mdi mdi-magnify"></i></button>
+    <button class="btn btn-primary" onclick="searchSongOrArtist()"><i class="mdi mdi-magnify"></i></button>
 </div>
 <div id="main-table-container">
-    <?php
-    /*
-    ?>
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th scope="col">Referencia</th>
-            <th scope="col">Artista</th>
-            <th scope="col">Canción</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>Otto</td>
-            <td>@mdo</td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>Thornton</td>
-            <td>@fat</td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>Larry the Bird</td>
-            <td>@twitter</td>
-        </tr>
-        </tbody>
-    </table>
-    */
-    ?>
 </div>
 <script>
-    buildTable([['una', 'dos', 'tres'], ['cuatro', 'cinco', 'seis']])
+    //
+    buildTable([['una', 'dos', 'tres'], ['cuatro', 'cinco', 'seis']]);
+    //
+
 </script>
 </body>
 </html>

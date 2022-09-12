@@ -1,27 +1,37 @@
-function search(text) {
-    const payload = {};
+//
+function searchSongOrArtist() {
+    const searchText = $('#song-search')[0].value;
+    //
+    const payload = {
+        'request': 'general_search',
+        'text': searchText,
+    };
     //
     $.ajax({
         method: "POST",
-        url: '',
+        url: '/lala/', // TODO: arreglar
         dataType: 'JSON',
         data: payload,
         success:
             function (data, status) {
-                loadingTag.style.visibility = "hidden";
-                const parsedData = JSON.parse(data);
-                if (status === "success" && parsedData['content']['status'] === 'success') {
-                    successTag.style.visibility = "visible";
-                    reloadPage();
+                //
+                // const parsedData = JSON.parse(data);
+                if (data['status'] === "success" && data['table_data'].length > 0) {
+                    buildTable(data['table_data']);
                 } else {
-                    errorTag.style.visibility = "visible";
+                    // TODO: también si no hay datos
+                    displayError();
                 }
             },
-        error: function () { loadingTag.style.visibility = 'hidden'; errorTag.style.visibility = 'visible'; }
+        error: function () {
+            displayError();
+        },
     });
 }
 
 function buildTable(tableRows) {
+    const mainTableContainer = $('#main-table-container');
+    //
     let tableHtml = '<table class="table table-bordered">'
         + '<thead>'
         + '<tr>'
@@ -43,9 +53,13 @@ function buildTable(tableRows) {
     tableHtml +=  '</tbody>'
         + '</table>';
     //
-    $('#main-table-container').append(tableHtml);
+    mainTableContainer.empty();
+    mainTableContainer.append(tableHtml);
 }
 
 function displayError() {
-    
+    const mainTableContainer = $('#main-table-container');
+    mainTableContainer.empty();
+    let errorHtml = '<h4>¡No se han encontrado canciones!</h4>';
+    mainTableContainer.append(errorHtml);
 }
