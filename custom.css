@@ -1,0 +1,37 @@
+#main-table-container {
+    width: 90%;
+    margin: auto;
+}
+
+#main-title-container {
+    margin: 25px auto;
+    width: fit-content;
+}
+
+#main-title-container > h1 {
+    display: inline;
+}
+
+#search-container {
+    width: 80%;
+    margin: 0 auto 40px auto;
+    display: flow-root;
+}
+
+#search-container > label {
+    width: 100%;
+    margin-bottom: 10px;
+    margin-left: 15px;
+}
+
+#search-container > input {
+    width: 80%;
+    float: left;
+}
+
+#search-container > button {
+    float: right;
+    width: 15%;
+    padding: 0;
+    font-size: 22px;
+}
