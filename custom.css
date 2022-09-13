@@ -3,6 +3,18 @@
     margin: auto;
 }
 
+#main-table-container table tr > *:nth-child(1) {
+    width: 20%;
+}
+
+#main-table-container table tr > *:nth-child(2) {
+    width: 40%;
+}
+
+#main-table-container table tr > *:nth-child(3) {
+    width: 40%;
+}
+
 #main-title-container {
     margin: 25px auto;
     width: fit-content;
@@ -34,4 +46,26 @@
     width: 15%;
     padding: 0;
     font-size: 22px;
+}
+
+#pagination nav {
+    width: 88%;
+    margin: 10px auto;
+}
+
+#pagination nav li {
+    width: 40px;
+    cursor: pointer;
+}
+
+#pagination nav li > a {
+    text-align: center;
+}
+
+#pagination nav li#first-page, #pagination nav li#last-page {
+    width: 45px;
+}
+
+#pagination nav li.no-visible {
+    cursor: default;
 }

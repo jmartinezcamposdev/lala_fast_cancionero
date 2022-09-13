@@ -1,22 +1,16 @@
 <?php
 
-function manageRequest(): ?string
-{
-    switch ($_POST['request']) {
-        case 'general_search':
-            return json_encode([
-                    'status' => 'success',
-                    'table_data' => [['siete', 'ocho', 'nueve'], ['diez', 'once', 'doce']],
-            ]);
-        default:
-            break;
-    }
-    return null;
-}
-
+include_once "autoload.php";
+include_once "request_manager.php";
+//
+$MAX_PAGINATION_COUNT = 10;
+//
+$connection = connectDB();
+$initialData = initialSearch($connection);
+//
 if (isset($_POST) && !empty($_POST)) {
     if (key_exists('request', $_POST)) {
-        $result = manageRequest();
+        $result = manageRequest($connection);
         if ($result != null) {
             print($result);
         }
@@ -49,11 +43,31 @@ if (isset($_POST) && !empty($_POST)) {
 </div>
 <div id="main-table-container">
 </div>
+<div id="pagination-container">
+    <div id="pagination" class="row">
+        <div class="pages-selector">
+            <nav>
+                <ul class="pagination flex-wrap pagination-rounded" id ="pag_container">
+                    <li onclick="firstPage()" id="first-page" class="page-item"><a class="page-link"><<</a></li>
+                    <li onclick="previousPage()" id="previous-page" class="page-item"><a class="page-link"><</a></li>
+                    <?php
+                    for ($i = 1; $i <= $MAX_PAGINATION_COUNT; $i++) {
+                        ?>
+                        <li onclick="changePage(<?= $i ?>)" data-item-index="<?= $i ?>" class="page-item<?= $i == 1 ? " active" : "" ?> numbered-page-item"><a class="page-link"><?= $i ?></a></li>
+                        <?php
+                    }
+                    ?>
+                    <li onclick="nextPage()" id="next-page" class="page-item"><a class="page-link">></a></li>
+                    <li onclick="lastPage()" id="last-page" class="page-item"><a class="page-link">>></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
 <script>
     //
-    buildTable([['una', 'dos', 'tres'], ['cuatro', 'cinco', 'seis']]);
+    buildTable(<?= json_encode($initialData['songs_data']) ?>, <?= json_encode($initialData['count']) ?>);
     //
-
 </script>
 </body>
 </html>

@@ -1,3 +1,5 @@
+var currentPage = 1;
+var totalCount = 15000;
 //
 function searchSongOrArtist() {
     const searchText = $('#song-search')[0].value;
@@ -9,15 +11,15 @@ function searchSongOrArtist() {
     //
     $.ajax({
         method: "POST",
-        url: '/lala/', // TODO: arreglar
+        url: '/lalakaraoke/', // TODO: arreglar
         dataType: 'JSON',
         data: payload,
         success:
             function (data, status) {
                 //
                 // const parsedData = JSON.parse(data);
-                if (data['status'] === "success" && data['table_data'].length > 0) {
-                    buildTable(data['table_data']);
+                if (data['status'] === "success" && data['songs_data'].length > 0) {
+                    buildTable(data['songs_data'], );
                 } else {
                     // TODO: también si no hay datos
                     displayError();
@@ -29,7 +31,7 @@ function searchSongOrArtist() {
     });
 }
 
-function buildTable(tableRows) {
+function buildTable(tableRows, count) {
     const mainTableContainer = $('#main-table-container');
     //
     let tableHtml = '<table class="table table-bordered">'
@@ -55,6 +57,8 @@ function buildTable(tableRows) {
     //
     mainTableContainer.empty();
     mainTableContainer.append(tableHtml);
+    //
+    buildPagination(count);
 }
 
 function displayError() {
@@ -63,3 +67,57 @@ function displayError() {
     let errorHtml = '<h4>¡No se han encontrado canciones!</h4>';
     mainTableContainer.append(errorHtml);
 }
+
+function buildPagination() {
+    // const pagesCount = getTotalPages();
+    //
+    const pagesCount = 5;
+    //
+    const numberedItems = $('li.numbered-page-item');
+    const firstItem = $('#first-page');
+    const previousItem = $('#previous-page');
+    const nextItem = $('#next-page');
+    const lastItem = $('#last-page');
+    numberedItems.removeClass('no-visible');
+    for (let i = 0; i < numberedItems.length; i++) {
+        if (i >= pagesCount) {
+            $(numberedItems[i]).addClass('no-visible');
+        }
+    }
+
+    //
+    if (window.currentPage === 1) {
+        firstItem.addClass('no-visible');
+        previousItem.addClass('no-visible');
+    }
+    if (window.currentPage === pagesCount) {
+        nextItem.addClass('no-visible');
+        lastItem.addClass('no-visible');
+    }
+
+}
+
+function changePage() {
+    $('li:nth-child(7)').attr('data-item-index');
+}
+
+function firstPage() {
+    window.currentPage = 1;
+}
+
+function previousPage() {
+
+}
+
+function nextPage() {
+
+}
+
+function lastPage() {
+    buildPagination();
+}
+
+function getTotalPages() {
+    return Math.trunc(window.totalCount / 10) + 1;
+}
+
