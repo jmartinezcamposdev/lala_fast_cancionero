@@ -31,7 +31,7 @@ function connectDB(bool $autocommit = true): mysqli
 }
 
 function fastQuerySQL(string $sql, mysqli $connection = null, int $mode = MYSQLI_BOTH, array $limits = null,
-                      int &$count = null): array
+                      int &$count = null, string $countSql = null): array
 {
     if ($connection == null) {
         // Creamos la conexión
@@ -48,13 +48,17 @@ function fastQuerySQL(string $sql, mysqli $connection = null, int $mode = MYSQLI
         $data = array();
     }
     //
-    if ($count != null) {
-        $count = sizeof($data);
+    if ($count !== null && $countSql !== null) {
+        $countResult = $connection->query($countSql);
+        $countData = $countResult->fetch_all($mode);
+        $count = $countData[0][0];
     }
     //
+    /*
     if ($limits != null && key_exists('offset', $limits) && key_exists('length', $limits)) {
         $data = array_slice($data, $limits['offset'], $limits['length']);
     }
+    */
     // Recuperamos los datos
     return $data;
 }
@@ -71,22 +75,24 @@ function initialSearch(mysqli $connection): array
 
 function manageRequest(mysqli $connection): ?string
 {
-
     switch ($_POST['request']) {
         case 'general_search':
-            $searchText = $_POST['text'];
-            $sql = "SELECT id, reference, singer_name, song_name FROM songs "
+            $searchText = quoteSqlString($_POST['text']);
+            $commonSql = " FROM songs "
                 . " WHERE singer_name LIKE '%" . $searchText . "%' "
                 . " OR song_name = '%" . $searchText . "%' "
                 . " OR reference LIKE '%" . $searchText . "%'";
+            $sql = "SELECT id, reference, singer_name, song_name " . $commonSql;
+            $countSql = "SELECT COUNT(*) " . $commonSql;
             //
             $limits = null;
             if (key_exists('offset', $_POST) && key_exists('length', $_POST)) {
                 $limits = ['offset' => $_POST['offset'], 'length' => $_POST['length']];
+                $sql .= " LIMIT " . $_POST['offset'] . ", " . $_POST['length'];
             }
             $count = 0;
             //
-            $result = fastQuerySQL($sql, $connection, limits: $limits, count: $count);
+            $result = fastQuerySQL($sql, $connection, limits: $limits, count: $count, countSql: $countSql);
             //
             $songsData = array_map(function ($row) {
                 return [$row['reference'], $row['singer_name'], $row['song_name']];
@@ -101,4 +107,15 @@ function manageRequest(mysqli $connection): ?string
             break;
     }
     return null;
+}
+
+function ensureNumeric(&$numericValue): int
+{
+    $numericValue = is_numeric($numericValue) ? $numericValue : -1;
+    return $numericValue;
+}
+
+function quoteSqlString(string $value): string
+{
+    return str_replace("'", "\\'", $value);
 }

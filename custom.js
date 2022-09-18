@@ -1,12 +1,21 @@
-var currentPage = 1;
+let currentPage = 1;
 var totalCount = 15000;
+const tableLength = 10;
 //
-function searchSongOrArtist() {
+function searchSongOrArtist(pushedIndex) {
     const searchText = $('#song-search')[0].value;
+    let offset = parseInt(pushedIndex)
+    if (Number.isNaN(offset)) {
+        offset = -1;
+    } else {
+        offset = (offset - 1) * tableLength;
+    }
     //
     const payload = {
         'request': 'general_search',
         'text': searchText,
+        'offset': offset,
+        'length': tableLength,
     };
     //
     $.ajax({
@@ -19,7 +28,7 @@ function searchSongOrArtist() {
                 //
                 // const parsedData = JSON.parse(data);
                 if (data['status'] === "success" && data['songs_data'].length > 0) {
-                    buildTable(data['songs_data'], );
+                    buildTable(data['songs_data'], data['count']);
                 } else {
                     // TODO: también si no hay datos
                     displayError();
@@ -97,24 +106,29 @@ function buildPagination() {
 
 }
 
-function changePage() {
-    $('li:nth-child(7)').attr('data-item-index');
+function changePage(pushedButton) {
+    const numberedItems = $('li.numbered-page-item');
+    const buttonElement = $(numberedItems[pushedButton - 1]);
+    numberedItems.removeClass('active');
+    buttonElement.addClass('active');
+    let pushedNumber = $(buttonElement).attr('data-item-index');
+    currentPage = pushedButton;
+    searchSongOrArtist(pushedNumber);
 }
 
 function firstPage() {
-    window.currentPage = 1;
+    changePage(1);
 }
 
 function previousPage() {
-
+    changePage(currentPage - 1);
 }
 
 function nextPage() {
-
+    changePage(currentPage + 1);
 }
 
 function lastPage() {
-    buildPagination();
 }
 
 function getTotalPages() {
