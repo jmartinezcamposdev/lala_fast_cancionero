@@ -70,104 +70,118 @@ export default function SongSearch({ initialSongs, totalCount: initialTotal, ini
     }
 
     return (
-      <div id="pagination-container">
-        <nav>
-          <ul class="pagination flex-wrap pagination-rounded" id="pag_container">
-            <li
-              onClick={() => goToPage(0)}
-              id="first-page"
-              class={`page-item ${currentPage === 0 ? 'disabled' : ''}`}
+      <div class="pagination-wrapper">
+        <button
+          class="page-btn"
+          disabled={currentPage === 0}
+          onClick={() => goToPage(0)}
+        >
+          {'<<'}
+        </button>
+        <button
+          class="page-btn"
+          disabled={currentPage === 0}
+          onClick={() => goToPage(currentPage - 1)}
+        >
+          {'<'}
+        </button>
+        {pages.map((page) => (
+          page !== null && (
+            <button
+              key={page}
+              class={`page-btn ${page === currentPage ? 'page-btn-active' : ''}`}
+              onClick={() => goToPage(page)}
             >
-              <a class="page-link">{'<<'}</a>
-            </li>
-            <li
-              onClick={() => goToPage(currentPage - 1)}
-              id="previous-page"
-              class={`page-item ${currentPage === 0 ? 'disabled' : ''}`}
-            >
-              <a class="page-link">{'<'}</a>
-            </li>
-            {pages.map((page) => (
-              page !== null && (
-                <li
-                  key={page}
-                  onClick={() => goToPage(page)}
-                  class={`page-item numbered-page-item ${page === currentPage ? 'active' : ''}`}
-                >
-                  <a class="page-link">{page + 1}</a>
-                </li>
-              )
-            ))}
-            <li
-              onClick={() => goToPage(currentPage + 1)}
-              id="next-page"
-              class={`page-item ${currentPage >= totalPages - 1 ? 'disabled' : ''}`}
-            >
-              <a class="page-link">{'>'}</a>
-            </li>
-            <li
-              onClick={() => goToPage(totalPages - 1)}
-              id="last-page"
-              class={`page-item ${currentPage >= totalPages - 1 ? 'disabled' : ''}`}
-            >
-              <a class="page-link">{'>>'}</a>
-            </li>
-          </ul>
-        </nav>
+              {page + 1}
+            </button>
+          )
+        ))}
+        <button
+          class="page-btn"
+          disabled={currentPage >= totalPages - 1}
+          onClick={() => goToPage(currentPage + 1)}
+        >
+          {'>'}
+        </button>
+        <button
+          class="page-btn"
+          disabled={currentPage >= totalPages - 1}
+          onClick={() => goToPage(totalPages - 1)}
+        >
+          {'>>'}
+        </button>
       </div>
     );
   };
 
+  const displaySongs = hasSearched ? songs : initialSongs;
+
   return (
-    <>
-      <div id="main-title-container">
-        <h1>Cancionero - Búsqueda rápida</h1>
-      </div>
-      <form id="search-container" onSubmit={handleSubmit}>
-        <label for="song-search">Búsqueda</label>
-        <input
-          id="song-search"
-          type="text"
-          class="form-control"
-          placeholder="Busca tu artista o canción preferidos"
-          value={searchText}
-          onInput={(e) => setSearchText((e.target as HTMLInputElement).value)}
-        />
-        <button type="submit" class="btn btn-primary">
-          <i class="mdi mdi-magnify" />
-        </button>
-      </form>
-      {loading && <p style={{ textAlign: 'center' }}>Cargando...</p>}
-      {hasSearched && !loading && songs.length === 0 && (
-        <div id="main-table-container">
-          <h4>¡No se han encontrado canciones!</h4>
+    <div class="song-search-app">
+      <header class="top-header">
+        <div class="header-inner">
+          <a href="/" class="logo-text">Karaoke LaLa</a>
+          <span class="header-divider">|</span>
+          <a href="/" class="subtitle-text">Cancionero</a>
         </div>
-      )}
-      {songs.length > 0 && (
-        <>
-          <div id="main-table-container">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th scope="col">Referencia</th>
-                  <th scope="col">Artista</th>
-                  <th scope="col">Canción</th>
-                </tr>
-              </thead>
-              <tbody>
-                {songs.map((song) => (
-                  <tr key={song.reference}>
-                    <th scope="row">{song.reference}</th>
-                    <td>{song.artist_name}</td>
-                    <td>{song.song_name}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {renderPagination()}
-        </>
-      )}
-    </>
+      </header>
+
+      <section class="hero-section">
+        <h1 class="hero-title">
+          <span class="hero-line hero-line-1">ENCUENTRA</span>
+          <span class="hero-line hero-line-2">TU CANCIÓN</span>
+        </h1>
+      </section>
+
+      <div class="table-wrapper">
+        {loading && <p class="loading-text">Cargando...</p>}
+
+        {!loading && (
+          <>
+            <form class="search-bar" onSubmit={handleSubmit}>
+              <input
+                type="text"
+                placeholder="Buscar"
+                value={searchText}
+                onInput={(e) => setSearchText((e.target as HTMLInputElement).value)}
+              />
+              <button type="submit">
+                <i class="mdi mdi-magnify" />
+              </button>
+            </form>
+            <div class="table-container">
+              <div class="table-inner">
+                <table>
+                  <thead>
+                    <tr>
+                      <th class="col-artist">Artista</th>
+                      <th class="col-title">Título</th>
+                      <th class="col-ref">Referencia</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {displaySongs.length > 0 ? (
+                      displaySongs.map((song, i) => (
+                        <tr key={`${song.reference}-${i}`}>
+                          <td class="col-artist">{song.artist_name}</td>
+                          <td class="col-title">{song.song_name}</td>
+                          <td class="col-ref">{song.reference}</td>
+                        </tr>
+                      ))
+                    ) : hasSearched ? (
+                      <tr>
+                        <td colspan="3" class="no-results-cell">¡No se han encontrado canciones!</td>
+                      </tr>
+                    ) : null}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        )}
+
+        {renderPagination()}
+      </div>
+    </div>
   );
 }
