@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Búsqueda rápida - Lala Karaoke{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous"/>
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css" rel="stylesheet"/>
+{% endblock %}
+
+{% block body %}
+<div data-controller="song-search" data-song-search-total-count-value="{{ totalCount }}" data-song-search-search-url-value="{{ path('song_search') }}">
+    <div id="main-title-container">
+        <h1>Cancionero - Búsqueda rápida</h1>
+    </div>
+    <div id="search-container">
+        <label for="song-search">Búsqueda</label>
+        <input id="song-search" type="text" class="form-control" placeholder="Busca tu artista o canción preferidos" data-song-search-target="searchInput">
+        <button class="btn btn-primary" data-action="click->song-search#search"><i class="mdi mdi-magnify"></i></button>
+    </div>
+    <div id="main-table-container" data-song-search-target="tableContainer">
+        {% if songs|length > 0 %}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Referencia</th>
+                        <th scope="col">Artista</th>
+                        <th scope="col">Canción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for song in songs %}
+                        <tr>
+                            <th scope="row">{{ song.reference }}</th>
+                            <td>{{ song.artistName }}</td>
+                            <td>{{ song.songName }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+    <div id="pagination-container" data-song-search-target="paginationContainer">
+        <div id="pagination" class="row">
+            <div class="pages-selector">
+                <nav>
+                    <ul class="pagination flex-wrap pagination-rounded" id="pag_container">
+                        <li data-action="click->song-search#firstPage" id="first-page" class="page-item"><a class="page-link"><<</a></li>
+                        <li data-action="click->song-search#previousPage" id="previous-page" class="page-item"><a class="page-link"><</a></li>
+                        {% for i in 1..10 %}
+                            <li data-action="click->song-search#changePage" data-song-search-index-param="{{ i }}" data-item-index="{{ i }}" class="page-item{{ i == 1 ? ' active' : '' }} numbered-page-item"><a class="page-link">{{ i }}</a></li>
+                        {% endfor %}
+                        <li data-action="click->song-search#nextPage" id="next-page" class="page-item"><a class="page-link">></a></li>
+                        <li data-action="click->song-search#lastPage" id="last-page" class="page-item"><a class="page-link">>></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
