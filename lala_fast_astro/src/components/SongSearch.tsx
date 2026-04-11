@@ -134,51 +134,53 @@ export default function SongSearch({ initialSongs, totalCount: initialTotal, ini
       </section>
 
       <div class="table-wrapper">
-        {loading && <p class="loading-text">Cargando...</p>}
+        {/* Search bar + loading indicator row */}
+        <div class="search-row">
+          <span class={`loading-indicator ${loading ? 'visible' : ''}`}>
+            <i class="mdi mdi-loading mdi-spin" /> Cargando...
+          </span>
+          <form class="search-bar" onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Buscar"
+              value={searchText}
+              onInput={(e) => setSearchText((e.target as HTMLInputElement).value)}
+            />
+            <button type="submit" disabled={loading}>
+              <i class="mdi mdi-magnify" />
+            </button>
+          </form>
+        </div>
 
-        {!loading && (
-          <>
-            <form class="search-bar" onSubmit={handleSubmit}>
-              <input
-                type="text"
-                placeholder="Buscar"
-                value={searchText}
-                onInput={(e) => setSearchText((e.target as HTMLInputElement).value)}
-              />
-              <button type="submit">
-                <i class="mdi mdi-magnify" />
-              </button>
-            </form>
-            <div class="table-container">
-              <div class="table-inner">
-                <table>
-                  <thead>
-                    <tr>
-                      <th class="col-artist">Artista</th>
-                      <th class="col-title">Título</th>
-                      <th class="col-ref">Referencia</th>
+        {/* Table always visible */}
+        <div class="table-container">
+          <div class="table-inner">
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-artist">Artista</th>
+                  <th class="col-title">Título</th>
+                  <th class="col-ref">Referencia</th>
+                </tr>
+              </thead>
+              <tbody>
+                {displaySongs.length > 0 ? (
+                  displaySongs.map((song, i) => (
+                    <tr key={`${song.reference}-${i}`}>
+                      <td class="col-artist">{song.artist_name}</td>
+                      <td class="col-title">{song.song_name}</td>
+                      <td class="col-ref">{song.reference}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {displaySongs.length > 0 ? (
-                      displaySongs.map((song, i) => (
-                        <tr key={`${song.reference}-${i}`}>
-                          <td class="col-artist">{song.artist_name}</td>
-                          <td class="col-title">{song.song_name}</td>
-                          <td class="col-ref">{song.reference}</td>
-                        </tr>
-                      ))
-                    ) : hasSearched ? (
-                      <tr>
-                        <td colspan="3" class="no-results-cell">¡No se han encontrado canciones!</td>
-                      </tr>
-                    ) : null}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </>
-        )}
+                  ))
+                ) : hasSearched ? (
+                  <tr>
+                    <td colspan="3" class="no-results-cell">¡No se han encontrado canciones!</td>
+                  </tr>
+                ) : null}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
         {renderPagination()}
       </div>
