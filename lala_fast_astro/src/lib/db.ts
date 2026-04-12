@@ -1,10 +1,7 @@
 import Database from 'better-sqlite3';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const DB_PATH = path.join(__dirname, '../data/lala_data.db');
+const DB_PATH = path.join(process.cwd(), 'src', 'data', 'lala_data.db');
 
 const ITEMS_PER_PAGE = 20;
 
@@ -12,6 +9,9 @@ let db: Database.Database | null = null;
 
 function getDb(): Database.Database {
   if (!db) {
+    console.log('CWD:', process.cwd());
+    console.log('DB_PATH:', DB_PATH);
+
     db = new Database(DB_PATH, { readonly: true });
   }
   return db;

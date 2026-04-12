@@ -8,6 +8,6 @@ export default defineConfig({
   integrations: [preact()],
   output: 'server',
   adapter: netlify({
-    includeFiles: ['./src/data/lala_data.db'],
+    includeFiles: ['src/data/lala_data.db'],
   })
 });
