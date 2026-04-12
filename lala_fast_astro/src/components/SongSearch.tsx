@@ -49,7 +49,7 @@ export default function SongSearch({ initialSongs, totalCount: initialTotal, ini
 
   const handleSubmit = (e: JSX.TargetedEvent<HTMLFormElement>) => {
     e.preventDefault();
-    doSearch(searchText, 0);
+    void doSearch(searchText, 0);
   };
 
   const handleInput = (e: JSX.TargetedEvent<HTMLInputElement>) => {
@@ -58,7 +58,7 @@ export default function SongSearch({ initialSongs, totalCount: initialTotal, ini
 
   const goToPage = (page: number) => {
     if (page >= 0 && page < totalPages) {
-      doSearch(searchText, page);
+      void doSearch(searchText, page);
     }
   };
 

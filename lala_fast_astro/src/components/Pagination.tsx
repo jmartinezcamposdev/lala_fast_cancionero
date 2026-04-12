@@ -1,5 +1,5 @@
 import type { JSX } from 'preact';
-import './Pagination.css';
+import '../styles/Pagination.css';
 
 interface Props {
   currentPage: number;

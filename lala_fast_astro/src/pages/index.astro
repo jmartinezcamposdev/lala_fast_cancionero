@@ -1,14 +1,14 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import type { Song } from '../lib/db';
+import SongAppLayout from '../layouts/SongAppLayout.astro';
 import SongSearch from '../components/SongSearch';
-import { searchSongs, countSongs, getRandomSongs, getItemsPerPage } from '../lib/db';
-
+import {searchSongs, countSongs, getRandomSongs, getItemsPerPage, } from '../lib/db';
 const url = new URL(Astro.request.url);
 const searchQuery = url.searchParams.get('search') || '';
 const pageParam = parseInt(url.searchParams.get('page') || '0', 10);
 
-let initialSongs = [];
-let totalCount = 0;
+let initialSongs: Song[];
+let totalCount: number;
 
 if (searchQuery) {
   initialSongs = searchSongs(searchQuery, pageParam);
@@ -21,7 +21,7 @@ if (searchQuery) {
 const itemsPerPage = getItemsPerPage();
 ---
 
-<Layout title="Cancionero - Karaoke LaLa">
+<SongAppLayout title="Cancionero - Karaoke LaLa">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css" rel="stylesheet" />
   <style is:global>
@@ -66,4 +66,4 @@ const itemsPerPage = getItemsPerPage();
     initialSearch={searchQuery}
     itemsPerPage={itemsPerPage}
   />
-</Layout>
+</SongAppLayout>

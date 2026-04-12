@@ -1,5 +1,5 @@
 import type { JSX } from 'preact';
-import './HeroSection.css';
+import '../styles/HeroSection.css';
 
 export default function HeroSection(): JSX.Element {
   return (

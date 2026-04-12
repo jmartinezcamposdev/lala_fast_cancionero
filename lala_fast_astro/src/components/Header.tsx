@@ -1,5 +1,5 @@
 import type { JSX } from 'preact';
-import './Header.css';
+import '../styles/Header.css';
 
 export default function Header(): JSX.Element {
   return (

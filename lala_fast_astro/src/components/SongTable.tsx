@@ -1,5 +1,5 @@
 import type { JSX } from 'preact';
-import './SongTable.css';
+import '../styles/SongTable.css';
 
 interface Song {
   reference: string;

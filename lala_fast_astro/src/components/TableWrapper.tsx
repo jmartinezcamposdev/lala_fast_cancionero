@@ -1,5 +1,5 @@
 import type { JSX } from 'preact';
-import './TableWrapper.css';
+import '../styles/TableWrapper.css';
 
 interface Props {
   children: JSX.Element | JSX.Element[] | string;

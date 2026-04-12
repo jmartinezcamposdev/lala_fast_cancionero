@@ -1,5 +1,5 @@
 import type { JSX } from 'preact';
-import './LoadingIndicator.css';
+import '../styles/LoadingIndicator.css';
 
 interface Props {
   visible: boolean;

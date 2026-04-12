@@ -1,5 +1,5 @@
 import type { JSX } from 'preact';
-import './SearchBar.css';
+import '../styles/SearchBar.css';
 
 interface Props {
   value: string;

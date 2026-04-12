@@ -67,13 +67,6 @@ export function getRandomSongs(limit: number = 20): Song[] {
   return stmt.all(limit) as Song[];
 }
 
-export function getTotalCount(): number {
-  const database = getDb();
-  const stmt = database.prepare('SELECT COUNT(*) as total FROM songs');
-  const result = stmt.get() as { total: number };
-  return result.total;
-}
-
 export function getItemsPerPage(): number {
   return ITEMS_PER_PAGE;
 }
