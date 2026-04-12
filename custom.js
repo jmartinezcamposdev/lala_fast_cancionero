@@ -1,27 +1,48 @@
-function search(text) {
-    const payload = {};
+let currentPage = 1;
+var totalCount = 15000;
+const tableLength = 10;
+//
+function searchSongOrArtist(pushedIndex) {
+    const searchText = $('#song-search')[0].value;
+    let offset = parseInt(pushedIndex)
+    if (Number.isNaN(offset)) {
+        offset = -1;
+    } else {
+        offset = (offset - 1) * tableLength;
+    }
+    //
+    const payload = {
+        'request': 'general_search',
+        'text': searchText,
+        'offset': offset,
+        'length': tableLength,
+    };
     //
     $.ajax({
         method: "POST",
-        url: '',
+        url: '/lalakaraoke/', // TODO: arreglar
         dataType: 'JSON',
         data: payload,
         success:
             function (data, status) {
-                loadingTag.style.visibility = "hidden";
-                const parsedData = JSON.parse(data);
-                if (status === "success" && parsedData['content']['status'] === 'success') {
-                    successTag.style.visibility = "visible";
-                    reloadPage();
+                //
+                // const parsedData = JSON.parse(data);
+                if (data['status'] === "success" && data['songs_data'].length > 0) {
+                    buildTable(data['songs_data'], data['count']);
                 } else {
-                    errorTag.style.visibility = "visible";
+                    // TODO: también si no hay datos
+                    displayError();
                 }
             },
-        error: function () { loadingTag.style.visibility = 'hidden'; errorTag.style.visibility = 'visible'; }
+        error: function () {
+            displayError();
+        },
     });
 }
 
-function buildTable(tableRows) {
+function buildTable(tableRows, count) {
+    const mainTableContainer = $('#main-table-container');
+    //
     let tableHtml = '<table class="table table-bordered">'
         + '<thead>'
         + '<tr>'
@@ -43,9 +64,74 @@ function buildTable(tableRows) {
     tableHtml +=  '</tbody>'
         + '</table>';
     //
-    $('#main-table-container').append(tableHtml);
+    mainTableContainer.empty();
+    mainTableContainer.append(tableHtml);
+    //
+    buildPagination(count);
 }
 
 function displayError() {
-    
+    const mainTableContainer = $('#main-table-container');
+    mainTableContainer.empty();
+    let errorHtml = '<h4>¡No se han encontrado canciones!</h4>';
+    mainTableContainer.append(errorHtml);
 }
+
+function buildPagination() {
+    // const pagesCount = getTotalPages();
+    //
+    const pagesCount = 5;
+    //
+    const numberedItems = $('li.numbered-page-item');
+    const firstItem = $('#first-page');
+    const previousItem = $('#previous-page');
+    const nextItem = $('#next-page');
+    const lastItem = $('#last-page');
+    numberedItems.removeClass('no-visible');
+    for (let i = 0; i < numberedItems.length; i++) {
+        if (i >= pagesCount) {
+            $(numberedItems[i]).addClass('no-visible');
+        }
+    }
+
+    //
+    if (window.currentPage === 1) {
+        firstItem.addClass('no-visible');
+        previousItem.addClass('no-visible');
+    }
+    if (window.currentPage === pagesCount) {
+        nextItem.addClass('no-visible');
+        lastItem.addClass('no-visible');
+    }
+
+}
+
+function changePage(pushedButton) {
+    const numberedItems = $('li.numbered-page-item');
+    const buttonElement = $(numberedItems[pushedButton - 1]);
+    numberedItems.removeClass('active');
+    buttonElement.addClass('active');
+    let pushedNumber = $(buttonElement).attr('data-item-index');
+    currentPage = pushedButton;
+    searchSongOrArtist(pushedNumber);
+}
+
+function firstPage() {
+    changePage(1);
+}
+
+function previousPage() {
+    changePage(currentPage - 1);
+}
+
+function nextPage() {
+    changePage(currentPage + 1);
+}
+
+function lastPage() {
+}
+
+function getTotalPages() {
+    return Math.trunc(window.totalCount / 10) + 1;
+}
+
