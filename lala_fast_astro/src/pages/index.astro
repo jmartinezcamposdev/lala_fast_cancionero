@@ -1,0 +1,68 @@
+---
+import type { Song } from '../lib/db';
+import SongAppLayout from '../layouts/SongAppLayout.astro';
+import SongSearch from '../components/SongSearch';
+import {searchSongs, countSongs, getRandomSongs, getItemsPerPage, } from '../lib/db';
+const url = new URL(Astro.request.url);
+const searchQuery = url.searchParams.get('search') || '';
+const pageParam = parseInt(url.searchParams.get('page') || '0', 10);
+
+let initialSongs: Song[];
+let totalCount: number;
+
+if (searchQuery) {
+  initialSongs = searchSongs(searchQuery, pageParam);
+  totalCount = countSongs(searchQuery);
+} else {
+  initialSongs = getRandomSongs(getItemsPerPage());
+  totalCount = countSongs('');
+}
+
+const itemsPerPage = getItemsPerPage();
+---
+
+<SongAppLayout title="Cancionero - Karaoke LaLa">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet" />
+  <style is:global>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+    }
+
+    :root {
+      --color-bg: #f4e8ce;
+      --color-surface: #ffffff;
+      --color-surface-hover: #faf3e6;
+      --color-red: #c0392b;
+      --color-red-dark: #a93226;
+      --color-red-table: #851307;
+      --color-yellow: #d4a017;
+      --color-yellow-accent: #e6b422;
+      --color-text: #2c2c2c;
+      --color-text-secondary: #6b6b6b;
+      --color-text-muted: #999999;
+      --color-border: #e8ddd0;
+      --color-border-light: #f0e8dc;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 24px rgba(120, 90, 50, 0.1);
+      --shadow-sm: 0 2px 8px rgba(120, 90, 50, 0.06);
+    }
+  </style>
+
+  <SongSearch
+    client:load
+    initialSongs={initialSongs}
+    totalCount={totalCount}
+    initialSearch={searchQuery}
+    itemsPerPage={itemsPerPage}
+  />
+</SongAppLayout>

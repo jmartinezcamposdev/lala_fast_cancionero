@@ -1,0 +1,46 @@
+.top-header {
+  background: #282828;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1rem 2rem;
+}
+
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-text {
+  font-weight: 900;
+  font-size: 1.35rem;
+  color: #e63946;
+  letter-spacing: -0.5px;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.logo-text:hover {
+  opacity: 0.85;
+}
+
+.header-divider {
+  color: rgba(255, 255, 255, 0.15);
+  font-size: 1.2rem;
+  user-select: none;
+}
+
+.subtitle-text {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #e0e0e0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.subtitle-text:hover {
+  opacity: 0.85;
+}
