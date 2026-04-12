@@ -8,7 +8,7 @@ interface Props {
 export default function LoadingIndicator({ visible }: Props): JSX.Element {
   return (
     <span class={`loading-indicator ${visible ? 'visible' : ''}`}>
-      <i class="mdi mdi-loading mdi-spin" /> Cargando...
+      <span class="spinner" /> Cargando...
     </span>
   );
 }
