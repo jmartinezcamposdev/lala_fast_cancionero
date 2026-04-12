@@ -1,6 +1,7 @@
 .loading-indicator {
   display: inline-flex;
   align-items: center;
+  margin-left: 40px;
   gap: 0.5rem;
   color: var(--color-text);
   font-size: 0.9rem;
