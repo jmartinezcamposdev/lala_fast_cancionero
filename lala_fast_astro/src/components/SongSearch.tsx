@@ -1,5 +1,12 @@
-import { h } from 'preact';
+import type { JSX } from 'preact';
 import { useState, useCallback } from 'preact/hooks';
+import Header from './Header';
+import HeroSection from './HeroSection';
+import SearchBar from './SearchBar';
+import LoadingIndicator from './LoadingIndicator';
+import SongTable from './SongTable';
+import Pagination from './Pagination';
+import TableWrapper from './TableWrapper';
 
 interface Song {
   reference: string;
@@ -14,9 +21,7 @@ interface Props {
   itemsPerPage: number;
 }
 
-const MAX_VISIBLE_PAGES = 10;
-
-export default function SongSearch({ initialSongs, totalCount: initialTotal, initialSearch, itemsPerPage }: Props) {
+export default function SongSearch({ initialSongs, totalCount: initialTotal, initialSearch, itemsPerPage }: Props): JSX.Element {
   const [songs, setSongs] = useState<Song[]>(initialSongs);
   const [totalCount, setTotalCount] = useState(initialTotal);
   const [searchText, setSearchText] = useState(initialSearch);
@@ -31,12 +36,7 @@ export default function SongSearch({ initialSongs, totalCount: initialTotal, ini
     try {
       const res = await fetch(`/catalog?search=${encodeURIComponent(text)}&page=${page}`);
       const data = await res.json();
-      const parsedSongs = data.songs_data.map((s: string[]) => ({
-        reference: s[0],
-        artist_name: s[1],
-        song_name: s[2],
-      }));
-      setSongs(parsedSongs);
+      setSongs(data.songs_data.map((s: string[]) => ({ reference: s[0], artist_name: s[1], song_name: s[2] })));
       setTotalCount(data.count);
       setCurrentPage(page);
       setHasSearched(true);
@@ -47,9 +47,13 @@ export default function SongSearch({ initialSongs, totalCount: initialTotal, ini
     }
   }, []);
 
-  const handleSubmit = (e: h.JSX.TargetedEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: JSX.TargetedEvent<HTMLFormElement>) => {
     e.preventDefault();
     doSearch(searchText, 0);
+  };
+
+  const handleInput = (e: JSX.TargetedEvent<HTMLInputElement>) => {
+    setSearchText((e.target as HTMLInputElement).value);
   };
 
   const goToPage = (page: number) => {
@@ -58,132 +62,20 @@ export default function SongSearch({ initialSongs, totalCount: initialTotal, ini
     }
   };
 
-  const renderPagination = () => {
-    if (!hasSearched || totalPages <= 0) return null;
-
-    const pages: (number | null)[] = [];
-    const startPage = Math.max(0, currentPage - Math.floor(MAX_VISIBLE_PAGES / 2));
-    const endPage = Math.min(totalPages, startPage + MAX_VISIBLE_PAGES);
-
-    for (let i = startPage; i < endPage; i++) {
-      pages.push(i);
-    }
-
-    return (
-      <div class="pagination-wrapper">
-        <button
-          class="page-btn"
-          disabled={currentPage === 0}
-          onClick={() => goToPage(0)}
-        >
-          {'<<'}
-        </button>
-        <button
-          class="page-btn"
-          disabled={currentPage === 0}
-          onClick={() => goToPage(currentPage - 1)}
-        >
-          {'<'}
-        </button>
-        {pages.map((page) => (
-          page !== null && (
-            <button
-              key={page}
-              class={`page-btn ${page === currentPage ? 'page-btn-active' : ''}`}
-              onClick={() => goToPage(page)}
-            >
-              {page + 1}
-            </button>
-          )
-        ))}
-        <button
-          class="page-btn"
-          disabled={currentPage >= totalPages - 1}
-          onClick={() => goToPage(currentPage + 1)}
-        >
-          {'>'}
-        </button>
-        <button
-          class="page-btn"
-          disabled={currentPage >= totalPages - 1}
-          onClick={() => goToPage(totalPages - 1)}
-        >
-          {'>>'}
-        </button>
-      </div>
-    );
-  };
-
   const displaySongs = hasSearched ? songs : initialSongs;
 
   return (
     <div class="song-search-app">
-      <header class="top-header">
-        <div class="header-inner">
-          <a href="/" class="logo-text">Karaoke LaLa</a>
-          <span class="header-divider">|</span>
-          <a href="/" class="subtitle-text">Cancionero</a>
-        </div>
-      </header>
-
-      <section class="hero-section">
-        <h1 class="hero-title">
-          <span class="hero-line hero-line-1">ENCUENTRA</span>
-          <span class="hero-line hero-line-2">TU CANCIÓN</span>
-        </h1>
-      </section>
-
-      <div class="table-wrapper">
-        {/* Search bar + loading indicator row */}
+      <Header />
+      <HeroSection />
+      <TableWrapper>
         <div class="search-row">
-          <span class={`loading-indicator ${loading ? 'visible' : ''}`}>
-            <i class="mdi mdi-loading mdi-spin" /> Cargando...
-          </span>
-          <form class="search-bar" onSubmit={handleSubmit}>
-            <input
-              type="text"
-              placeholder="Buscar"
-              value={searchText}
-              onInput={(e) => setSearchText((e.target as HTMLInputElement).value)}
-            />
-            <button type="submit" disabled={loading}>
-              <i class="mdi mdi-magnify" />
-            </button>
-          </form>
+          <LoadingIndicator visible={loading} />
+          <SearchBar value={searchText} onInput={handleInput} onSubmit={handleSubmit} loading={loading} />
         </div>
-
-        {/* Table always visible */}
-        <div class="table-container">
-          <div class="table-inner">
-            <table>
-              <thead>
-                <tr>
-                  <th class="col-artist">Artista</th>
-                  <th class="col-title">Título</th>
-                  <th class="col-ref">Referencia</th>
-                </tr>
-              </thead>
-              <tbody>
-                {displaySongs.length > 0 ? (
-                  displaySongs.map((song, i) => (
-                    <tr key={`${song.reference}-${i}`}>
-                      <td class="col-artist">{song.artist_name}</td>
-                      <td class="col-title">{song.song_name}</td>
-                      <td class="col-ref">{song.reference}</td>
-                    </tr>
-                  ))
-                ) : hasSearched ? (
-                  <tr>
-                    <td colspan="3" class="no-results-cell">¡No se han encontrado canciones!</td>
-                  </tr>
-                ) : null}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {renderPagination()}
-      </div>
+        <SongTable songs={displaySongs} hasSearched={hasSearched} />
+        {hasSearched ? <Pagination currentPage={currentPage} totalPages={totalPages} onGoToPage={goToPage} /> : <></>}
+      </TableWrapper>
     </div>
   );
 }

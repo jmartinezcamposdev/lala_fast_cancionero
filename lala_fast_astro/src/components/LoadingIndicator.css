@@ -1,0 +1,27 @@
+.loading-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-red);
+  font-size: 0.9rem;
+  font-weight: 600;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  flex-shrink: 0;
+}
+
+.loading-indicator.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.loading-indicator i {
+  font-size: 1.2rem;
+}
+
+@media (max-width: 640px) {
+  .loading-indicator {
+    justify-content: center;
+  }
+}
