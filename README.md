@@ -14,8 +14,7 @@ This project aims to replace that approach with a server-side SQLite backend tha
 
 | Component | Stack |
 |---|---|
-| **Frontend** | Astro 6 + Preact (SSR) with hand-crafted CSS — no UI frameworks |
-| **Backend** | Server-side rendering via `@astrojs/vercel` |
+| **Frontend** | Astro 6 + Preact (SSR) with hand-crafted CSS |
 | **Database** | SQLite (`better-sqlite3`) — read-only, embedded, zero external dependency |
 | **Import tool** | Python scripts (`lala_import_project/`) that transform legacy JSON exports into a clean SQLite database |
 
@@ -24,9 +23,13 @@ This project aims to replace that approach with a server-side SQLite backend tha
 - **`lala_fast_astro/`** — The web application. Handles song search, pagination, and catalog browsing.
 - **`lala_import_project/`** — Python import pipeline. Converts legacy JSON catalog files into the SQLite database used by the app.
 
+## Run
+
+Command `npm run dev` will start a local dev server at `localhost:4321`.
+
 ## Deploy
 
-The project is pre-configured for **Vercel**. The `@astrojs/vercel` adapter is set up and `npm run build` produces Vercel-ready output out of the box. Just push to your repo and connect it to Vercel — no extra configuration needed.
+The project is pre-configured for **Netlify**. The `@astrojs/netlify` adapter is set up. `npm run build` produces Netlify-ready output, no extra configuration needed.
 
 ## License
 
